@@ -1,0 +1,40 @@
+repos:
+  - repo: local
+    hooks:
+      - id: nbqa-black
+        name: nbqa-black
+        language: python
+        files: \.ipynb$
+        entry: nbqa
+        args: [black]
+      - id: nbqa-isort
+        name: nbqa-isort
+        language: python
+        files: \.ipynb$
+        entry: nbqa
+        args: [isort --profile black]
+      - id: black
+        name: black
+        language: python
+        entry: black
+        types: [python]
+      - id: isort
+        name: isort
+        language: python
+        entry: isort
+        types: [python]
+      # - id: mypy
+      #   name: mypy
+      #   language: python
+      #   entry: mypy
+      #   types: [python]
+      # - id: pylint
+      #   name: pylint
+      #   language: python
+      #   entry: pylint
+      #   types: [python]
+      # - id: flake8
+      #   name: flake8
+      #   language: python
+      #   entry: flake8
+      #   types: [python]
