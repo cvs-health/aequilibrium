@@ -31,11 +31,9 @@ class Visualize:
         num_decimals: int = 2,
     ):
         """My class description
-
         Args:
             results (Results): An aequilibrium Results instance
             num_decimals (int): Desired rounding for floats
-
         Returns:
             None
         """
@@ -52,11 +50,9 @@ class Visualize:
         save_file_name: Optional[str] = None,
     ) -> None:
         """Displays a precision recall curve of the given results of a model
-
         Args:
             display (bool): True displays PR Curve
             save_file_name (str): Filename to save plot to file
-
         Returns:
             TODO
         """
@@ -84,11 +80,9 @@ class Visualize:
         save_file_name: Optional[str] = None,
     ) -> None:
         """Function that displays a heatmap of a confusion matrix.
-
         Args:
             display (bool): True displays PR Curve
             save_file_name (str): Filename to save plot to file
-
         Returns:
             None
         """
@@ -111,11 +105,9 @@ class Visualize:
         save_file_name: Optional[str] = None,
     ) -> None:
         """Displays a gain chart of the given results of a model
-
         Args:
             display (bool): True displays gain chart
             save_file_name (str): Filename to save plot to file
-
         Returns:
             None
         """
@@ -167,18 +159,27 @@ class Visualize:
 
     def plot_lift_chart(
         self,
+        cumulative: bool = True,
         display: bool = True,
         save_file_name: Optional[str] = None,
     ) -> None:
         """Displays a lift chart of the given results of a model
-
         Args:
+            cumulative (bool): True displays cumulative lift chart, False displays non-cumulative, percentile-wise
+                lift chart
             display (bool): True displays gain chart
             save_file_name (str): Filename to save plot to file
-
         Returns:
             None
         """
+        if cumulative == True:
+            y_name: str = "Model_Lift"
+            chart_title_prefix: str = "Cumulative"
+        elif cumulative == False:
+            y_name: str = "Percentile_Model_Lift"
+            chart_title_prefix: str = "Non-Cumulative, Percentile-Wise"
+        else:
+            raise ValueError("cumulative parameter only supports bool types.")
 
         enrich_table = self.metric_summary
         sb.lineplot(
@@ -193,7 +194,7 @@ class Visualize:
         )
         sb.lineplot(
             x="percentile_x_100",
-            y="Model_Lift",
+            y=y_name,
             data=enrich_table,
             dashes=False,
             color="blue",
@@ -202,7 +203,7 @@ class Visualize:
             sort=False,
         )
 
-        plt.title("Lift Chart", fontsize=32, fontweight="bold")
+        plt.title(f"{chart_title_prefix} Lift Chart", fontsize=32, fontweight="bold")
         plt.xlabel("Percent Group", fontsize=22)
         plt.ylabel("Lift", fontsize=22)
         plt.grid(axis="x", color="0.95")
@@ -221,11 +222,9 @@ class Visualize:
         save_dir: Optional[str] = False,
     ) -> pd.DataFrame:
         """Creates evaluation metrics from results dataframe
-
         Args:
             display (bool): True displays gain chart
             save_dir (str): File directory to save plots
-
         Returns:
             Enrichment dataframe
         """
