@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aequilibrium"
-version = "1.0.0"
+version = "1.0.1"
 description = "Python package for classification of imbalanced data."
 authors = ["Luke Beasley <beasleyl2@aetna.com>",
     "Lin Han <hanl1@aetna.com>",
