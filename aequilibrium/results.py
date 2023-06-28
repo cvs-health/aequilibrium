@@ -34,12 +34,10 @@ class Results:
         probabilities: pd.Series,
     ):
         """Helper class to manage and evaluate model output
-
         Args:
             actuals (pd.Series): The actual observed response variable
             predictions (pd.Series): The predicted response variable
             probabilities (pd.Series): The probability of the positive class
-
         Returns:
             None
         """
@@ -140,7 +138,6 @@ class Results:
 
     def get_confusion_matrix(self) -> pd.DataFrame:
         """Get the confusion matrix for this model results
-
         Returns:
             pd.DataFrame: Confusion matrix
         """
@@ -155,10 +152,8 @@ class Results:
 
     def get_summary_table(self, num_bins: int = 5) -> pd.DataFrame:
         """Replacement for enrichment table function
-
         Args:
             num_bins (int): _description_. Defaults to 5.
-
         Returns:
             pd.DataFrame: _description_
         """
@@ -193,7 +188,6 @@ class Results:
         num_decimals: int = 2,
     ) -> pd.DataFrame:
         """Creates enrichment table to be returned and used in lift and gain functions
-
         Returns:
             pd.DataFrame of enrichment table
         """
@@ -209,26 +203,47 @@ class Results:
 
         enrich_df = (
             metrics.groupby("percentile")
-            .agg({"probabilities": ["min", "max"], "index": "count", "actuals": "sum"})
+            .agg(
+                {
+                    "probabilities": ["min", "max", "mean"],
+                    "index": "count",
+                    "actuals": "sum",
+                }
+            )
             .reset_index()
         )
         enrich_df.columns = [
             "percentile",
             "min_y_proba",
             "max_y_proba",
-            "row_count",
-            "pos_count",
+            "mean_y_proba",
+            "percentile_row_count",
+            "percentile_pos_count",
         ]
 
-        total_events = enrich_df["pos_count"].sum()
-        enrich_df["perc_random_events"] = (1 / len(enrich_df["percentile"])) * 100
+        total_events = enrich_df["percentile_pos_count"].sum()
+        enrich_df["percentile_perc_random_events"] = (
+            1 / len(enrich_df["percentile"])
+        ) * 100
         # enrich_df[["row_count", "pos_count", "perc_random_events"]] = pd.DataFrame.cumsum(enrich_df)[["row_count", "pos_count", "perc_random_events"]]
+
+        # Metrics with prefix "percentile" are metrics are calculated non-cumulative. row_count, pos_count, and perc_random_events are cumulative
         enrich_df[["row_count", "pos_count", "perc_random_events"]] = enrich_df[
-            ["row_count", "pos_count", "perc_random_events"]
+            [
+                "percentile_row_count",
+                "percentile_pos_count",
+                "percentile_perc_random_events",
+            ]
         ].cumsum()
 
         enrich_df = enrich_df.assign(
             perc_actual_events=(enrich_df["pos_count"] / total_events) * 100,
+            percentile_perc_actual_events=(
+                enrich_df["percentile_pos_count"] / total_events
+            )
+            * 100,
+            percent_of_population_x_100=(enrich_df["percentile_row_count"] / num_rows)
+            * 100,
             percentile_x_100=enrich_df["percentile"] * 100,
             Random_Lift=1,
             precision=enrich_df["pos_count"] / enrich_df["row_count"],
@@ -237,5 +252,8 @@ class Results:
         return enrich_df.assign(
             Model_Lift=enrich_df["perc_actual_events"]
             / enrich_df["perc_random_events"],
+            Percentile_Model_Lift=enrich_df["percentile_perc_actual_events"]
+            / enrich_df["percent_of_population_x_100"],
             recall=enrich_df["perc_actual_events"],
+            percentile_recall=enrich_df["percentile_perc_actual_events"],
         )
