@@ -2,17 +2,21 @@
 name = "aequilibrium"
 version = "1.0.1"
 description = "Python package for classification of imbalanced data."
-authors = ["Luke Beasley <beasleyl2@aetna.com>",
-    "Lin Han <hanl1@aetna.com>",
-    "Matthew Trudeau <trudeaum@aetna.com>",
-    "Alex Xu <alex.xu2@cvshealth.com>",
-    "Jason Dwyer <DwyerJ1@aetna.com>",]
+authors = ["Luke Beasley",
+    "Lin Han",
+    "Matthew Trudeau",
+    "Alex Xu",
+    "Jason Dwyer",
+    "Kunal Amladi",
+    "Adam Welly",]
 maintainers = [
-    "Luke Beasley <beasleyl2@aetna.com>",
-    "Lin Han <hanl1@aetna.com>",
-    "Matthew Trudeau <trudeaum@aetna.com>",
-    "Alex Xu <alex.xu2@cvshealth.com>",
-    "Jason Dwyer <DwyerJ1@aetna.com>",
+    "Luke Beasley",
+    "Lin Han",
+    "Matthew Trudeau",
+    "Alex Xu",
+    "Jason Dwyer",
+    "Kunal Amladi",
+    "Adam Welly",
 ]
 repository = "https://github.com/cvs-health/aequilibrium"
 
