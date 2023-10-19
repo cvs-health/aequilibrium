@@ -198,8 +198,11 @@ class Results:
         )
         num_rows = metrics.shape[0]
         metrics["percentile"] = (
-            pd.Series(range(num_rows)).divide(num_rows).round(num_decimals)
-        )
+            (pd.Series(range(num_rows)).divide(num_rows) * (10**num_decimals))
+            .astype(int)
+            .astype(float)
+            / (10**num_decimals)
+        ) + (1 / (10**num_decimals))
 
         enrich_df = (
             metrics.groupby("percentile")
