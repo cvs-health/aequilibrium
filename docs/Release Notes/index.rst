@@ -15,3 +15,9 @@ Released on 4-21-2023
 Released on 6-27-2023
 
 - Added non-cumulative lift calculations and charts
+
+1.0.2
+-----
+Released on 10-20-2023
+
+- Fixed percentile calculations in enrichment tables
