@@ -25,7 +25,7 @@ from aequilibrium.dataset import DataSet
 
 class TestCompute(unittest.TestCase):
     hypothesis_dataset = data_frames(
-        index=range_indexes(min_size=1),
+        index=range_indexes(min_size=4),
         columns=[
             column(
                 "A",
@@ -85,8 +85,14 @@ class TestCompute(unittest.TestCase):
 
         return super().setUp(*args, **kwargs)
 
+    def _fix_hypothesis_dataset(self, dataset: pd.DataFrame):
+        dataset.at[0, "target"] = False
+        dataset.at[1, "target"] = True
+        return dataset
+
     @given(hypothesis_dataset)
     def test_hypothesis_initialization(self, dataset: pd.DataFrame):
+        dataset = self._fix_hypothesis_dataset(dataset)
         predictors = dataset.drop(columns=[self.target_column])
         target = dataset[self.target_column]
         new_dataset = DataSet(predictors=predictors, target=target)
@@ -99,6 +105,7 @@ class TestCompute(unittest.TestCase):
 
     @given(hypothesis_dataset)
     def test_hypothesis_property_existence(self, dataset: pd.DataFrame):
+        dataset = self._fix_hypothesis_dataset(dataset)
         predictors = dataset.drop(columns=[self.target_column])
         target = dataset[self.target_column]
         new_dataset = DataSet(predictors=predictors, target=target)
@@ -112,6 +119,7 @@ class TestCompute(unittest.TestCase):
 
     @given(hypothesis_dataset)
     def test_hypothesis_property_dtype(self, dataset: pd.DataFrame):
+        dataset = self._fix_hypothesis_dataset(dataset)
         predictors = dataset.drop(columns=[self.target_column])
         target = dataset[self.target_column]
         new_dataset = DataSet(predictors=predictors, target=target)
@@ -125,6 +133,7 @@ class TestCompute(unittest.TestCase):
 
     @given(hypothesis_dataset)
     def test_hypothesis_balance(self, dataset: pd.DataFrame):
+        dataset = self._fix_hypothesis_dataset(dataset)
         predictors = dataset.drop(columns=[self.target_column])
         target = dataset[self.target_column]
         new_dataset = DataSet(predictors=predictors, target=target)
@@ -146,6 +155,15 @@ class TestCompute(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             _ = DataSet(predictors=self.predictors, target=self.target.loc[:5])
+
+    def test_binary_target(self):
+        target = pd.Series([0] * self.target.size)
+        with self.assertRaises(ValueError):
+            _ = DataSet(predictors=self.predictors, target=target)
+
+        target = pd.Series(list(range(self.target.size)))
+        with self.assertRaises(ValueError):
+            _ = DataSet(predictors=self.predictors, target=target)
 
     def test_invalid_parameter_types(self):
 
