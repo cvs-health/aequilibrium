@@ -76,6 +76,16 @@ class DataSet:
                 f"aequilibrium requires the DataSet parameters `predictors` and `target` to have the same number of rows. Instead, you passed a DataFrame with shape `{self.predictors.shape}` and a series with shape `{self.target.size}`"
             )
 
+        if self.target.size < 4:
+            raise ValueError(
+                f"aequilibrium does not handle datasets with less than four rows. Practical usage of aequilibrium requires four rows to observe an imbalance. Currently we are observing `{self.target.size()}` rows."
+            )
+
+        if self.target.nunique() != 2:
+            raise ValueError(
+                f"aequilibrium does not handle non-binary targets. Currently we are observing `{self.target.nunique()}` unique target values."
+            )
+
         if (
             self.predictors.select_dtypes(include=np.number).shape[1]
             != self.predictors.shape[1]
